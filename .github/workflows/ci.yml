@@ -10,6 +10,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      POETRY_VIRTUALENVS_CREATE: "false"
+      POETRY_INSTALLER_NO_ROOT: "1"
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,9 +25,6 @@ jobs:
 
       - name: Install Poetry
         run: pip install poetry
-
-      - name: Configure Poetry
-        run: poetry config virtualenvs.create false
 
       - name: Install dependencies
         run: poetry install --no-root
