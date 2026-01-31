@@ -29,7 +29,9 @@ jobs:
         run: poetry export -f requirements.txt --without-hashes -o requirements.txt
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
 
       - name: Run tests with coverage
-        run: pytest --cov=src --cov-report=term --cov-fail-under=90
+        run: python -m pytest --cov=src --cov-report=term --cov-fail-under=90
