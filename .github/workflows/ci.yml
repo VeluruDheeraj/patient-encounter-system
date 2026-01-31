@@ -10,10 +10,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    env:
-      POETRY_VIRTUALENVS_CREATE: "false"
-      POETRY_INSTALLER_NO_ROOT: "1"
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,8 +22,11 @@ jobs:
       - name: Install Poetry
         run: pip install poetry
 
+      - name: Export dependencies
+        run: poetry export -f requirements.txt --without-hashes -o requirements.txt
+
       - name: Install dependencies
-        run: poetry install --no-root
+        run: pip install -r requirements.txt
 
       - name: Run tests with coverage
-        run: poetry run pytest --cov=src --cov-report=term --cov-fail-under=90
+        run: pytest --cov=src --cov-report=term --cov-fail-under=90
