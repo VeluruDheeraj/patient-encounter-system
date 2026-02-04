@@ -1,21 +1,27 @@
-from datetime import datetime, timedelta, timezone
-from sqlalchemy.orm import Session
-from src.models.appointment import Appointment
+from datetime import datetime, timedelta, timezone, date
+from src.services.appointment_service import create_appointment
+from src.services.appointment_querey_service import list_appointments
 
-def list_appointments(
-    db: Session,
-    query_date,
-    doctor_id: int | None = None,
-):
-    start = datetime.combine(query_date, datetime.min.time()).replace(tzinfo=timezone.utc)
-    end = start + timedelta(days=1)
 
-    q = db.query(Appointment).filter(
-        Appointment.start_time >= start,
-        Appointment.start_time < end,
+class Dummy:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
+
+def test_query_service_runs(db_session):
+    data = Dummy(
+        patient_id=1,
+        doctor_id=1,
+        start_time=datetime.now(timezone.utc) + timedelta(hours=2),
+        duration_minutes=30,
     )
 
-    if doctor_id is not None:
-        q = q.filter(Appointment.doctor_id == doctor_id)
+    create_appointment(db_session, data)
 
-    return q.all()
+    result = list_appointments(
+        db_session,
+        query_date=date.today(),
+        doctor_id=1,
+    )
+
+    assert isinstance(result, list)

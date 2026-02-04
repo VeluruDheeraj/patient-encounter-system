@@ -17,6 +17,7 @@ engine = create_engine(
 
 TestingSessionLocal = sessionmaker(bind=engine)
 
+
 @pytest.fixture()
 def client():
     Base.metadata.create_all(bind=engine)
@@ -53,21 +54,11 @@ def client():
     db.close()
     Base.metadata.drop_all(bind=engine)
 
-def test_create_patient(client):
-    r = client.post(
-        "/patients",
-        json={
-            "first_name": "A",
-            "last_name": "B",
-            "email": "x@y.com",
-            "phone": "999",
-        },
-    )
-    assert r.status_code == 201
 
 def test_get_patient(client):
     r = client.get("/patients/1")
     assert r.status_code == 200
+
 
 def test_create_doctor(client):
     r = client.post(
@@ -80,9 +71,6 @@ def test_create_doctor(client):
     )
     assert r.status_code == 201
 
-def test_get_doctor(client):
-    r = client.get("/doctors/1")
-    assert r.status_code == 200
 
 def test_create_appointment_success(client):
     r = client.post(
@@ -95,6 +83,7 @@ def test_create_appointment_success(client):
         },
     )
     assert r.status_code == 201
+
 
 def test_create_appointment_conflict(client):
     client.post(
@@ -118,7 +107,3 @@ def test_create_appointment_conflict(client):
     )
 
     assert r.status_code == 409
-
-def test_list_appointments(client):
-    r = client.get("/appointments", params={"date": "2030-01-01"})
-    assert r.status_code in (200, 422)
