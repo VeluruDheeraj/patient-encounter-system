@@ -3,10 +3,12 @@ from sqlalchemy.orm import Session
 from src.models.appointment import Appointment
 from src.models.doctor import Doctor
 
+
 def make_utc(dt):
     if dt.tzinfo is None:
         return dt.replace(tzinfo=timezone.utc)
     return dt.astimezone(timezone.utc)
+
 
 def create_appointment(db: Session, data):
     if data.start_time.tzinfo is None:
@@ -27,9 +29,9 @@ def create_appointment(db: Session, data):
     new_start = make_utc(data.start_time)
     new_end = new_start + timedelta(minutes=data.duration_minutes)
 
-    existing = db.query(Appointment).filter(
-        Appointment.doctor_id == data.doctor_id
-    ).all()
+    existing = (
+        db.query(Appointment).filter(Appointment.doctor_id == data.doctor_id).all()
+    )
 
     for appt in existing:
         existing_start = make_utc(appt.start_time)

@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, ForeignKey, DateTime
 from sqlalchemy.sql import func
 from src.database import Base
 
+
 class Appointment(Base):
     __tablename__ = "dheeraj_appointments"
 
