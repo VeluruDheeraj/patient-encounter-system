@@ -12,7 +12,10 @@ from src.services.doctor_service import create_doctor, get_doctor
 from src.services.appointment_service import create_appointment
 from src.services.appointment_querey_service import list_appointments
 
-app = FastAPI(title="Medical Encounter Management System")
+app = FastAPI(
+    title="Medical Encounter Management System",
+    version="1.0.0",
+)
 
 def get_db():
     db = SessionLocal()
@@ -20,6 +23,10 @@ def get_db():
         yield db
     finally:
         db.close()
+
+@app.get("/")
+def health():
+    return {"status": "ok"}
 
 @app.post("/patients", response_model=PatientRead, status_code=201)
 def create_patient_api(data: PatientCreate, db: Session = Depends(get_db)):

@@ -36,9 +36,15 @@ def create_appointment(db: Session, data):
         existing_end = existing_start + timedelta(minutes=appt.duration_minutes)
 
         if existing_start < new_end and existing_end > new_start:
-            raise ValueError("Overlapping appointment")
+            raise ValueError("Appointment conflict")
 
-    appointment = Appointment(**data.model_dump())
+    appointment = Appointment(
+        patient_id=data.patient_id,
+        doctor_id=data.doctor_id,
+        start_time=new_start,
+        duration_minutes=data.duration_minutes,
+    )
+
     db.add(appointment)
     db.commit()
     db.refresh(appointment)
