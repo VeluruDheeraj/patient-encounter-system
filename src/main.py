@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from datetime import date
 from typing import List
 
-from src.database import SessionLocal
+from src.database import SessionLocal, Base, engine
 from src.schemas.patient import PatientCreate, PatientRead
 from src.schemas.doctor import DoctorCreate, DoctorRead
 from src.schemas.appointment import AppointmentCreate, AppointmentRead
@@ -16,6 +16,8 @@ app = FastAPI(
     title="Medical Encounter Management System",
     version="1.0.0",
 )
+
+Base.metadata.create_all(bind=engine)
 
 
 def get_db():
@@ -33,7 +35,10 @@ def health():
 
 @app.post("/patients", response_model=PatientRead, status_code=201)
 def create_patient_api(data: PatientCreate, db: Session = Depends(get_db)):
-    return create_patient(db, data)
+    try:
+        return create_patient(db, data)
+    except Exception as e:
+        raise HTTPException(status_code=409, detail=str(e))
 
 
 @app.get("/patients/{patient_id}", response_model=PatientRead)
