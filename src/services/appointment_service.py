@@ -31,9 +31,7 @@ def _ensure_doctor_available(db: Session, doctor_id: int):
 def _has_overlap(db: Session, doctor_id: int, new_start: datetime, duration: int):
     new_end = new_start + timedelta(minutes=duration)
 
-    existing = (
-        db.query(Appointment).filter(Appointment.doctor_id == doctor_id).all()
-    )
+    existing = db.query(Appointment).filter(Appointment.doctor_id == doctor_id).all()
 
     for appt in existing:
         existing_start = _make_utc(appt.start_time)
